@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,10 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "SECRET_KEY"; 
+
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
     private final long EXPIRATION_TIME = 86400000;
     
     private Key getSigningKey() {
@@ -54,7 +58,6 @@ public class JwtUtil {
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
             .setSigningKey(getSigningKey())
-            .build()
             .parseClaimsJws(token)
             .getBody();
     }
