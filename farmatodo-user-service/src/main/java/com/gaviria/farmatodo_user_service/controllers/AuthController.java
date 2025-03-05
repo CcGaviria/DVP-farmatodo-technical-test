@@ -17,11 +17,14 @@ import com.gaviria.farmatodo_user_service.models.User;
 import com.gaviria.farmatodo_user_service.repositories.UserRepository;
 import com.gaviria.farmatodo_user_service.security.JwtUtil;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Autenticación", description = "Operaciones de autenticación")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -30,6 +33,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
+    @Operation(summary = "Iniciar sesión")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         String token = jwtUtil.generateToken(loginRequest.getEmail());
@@ -37,6 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar un usuario")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new RuntimeException("Email already exists");
