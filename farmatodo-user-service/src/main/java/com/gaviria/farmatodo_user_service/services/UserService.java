@@ -2,9 +2,11 @@ package com.gaviria.farmatodo_user_service.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.gaviria.farmatodo_user_service.dto.UserResponse;
 import com.gaviria.farmatodo_user_service.models.User;
 import com.gaviria.farmatodo_user_service.repositories.UserRepository;
 
@@ -30,8 +32,10 @@ public class UserService {
         return userRepository.save(userToUpdate);
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map( user -> new UserResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail())).collect(Collectors.toList());
     }
 
     public User getUserById(UUID id) {
