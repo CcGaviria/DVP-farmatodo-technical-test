@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gaviria.farmatodo_ticket_service.dto.TicketRequest;
 import com.gaviria.farmatodo_ticket_service.dto.TicketResponse;
+import com.gaviria.farmatodo_ticket_service.enums.TicketStatus;
 import com.gaviria.farmatodo_ticket_service.services.TicketService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,8 +62,9 @@ public class TicketController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los tickets")
-    public ResponseEntity<Page<TicketResponse>> getTickets(Pageable pageable) {
-        return ResponseEntity.ok(ticketService.getTickets(pageable));
+    public ResponseEntity<Page<TicketResponse>> getTickets(Pageable pageable, @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) TicketStatus status) {
+            return ResponseEntity.ok(ticketService.getTickets(userId, status, pageable));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

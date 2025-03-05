@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.gaviria.farmatodo_ticket_service.dto.TicketRequest;
 import com.gaviria.farmatodo_ticket_service.dto.TicketResponse;
+import com.gaviria.farmatodo_ticket_service.enums.TicketStatus;
 import com.gaviria.farmatodo_ticket_service.mappers.TicketMapper;
 import com.gaviria.farmatodo_ticket_service.models.Ticket;
 import com.gaviria.farmatodo_ticket_service.repositories.TicketRepository;
@@ -48,7 +49,17 @@ public class TicketService {
         return ticketMapper.toResponse(ticket);
     }
 
-    public Page<TicketResponse> getTickets(Pageable pageable) {
+    public Page<TicketResponse> getTickets(UUID userId, TicketStatus status, Pageable pageable) {
+        if( userId != null && status != null) {
+            return ticketRepository.findByUserIdAndStatus(userId, status, pageable)
+                    .map(ticketMapper::toResponse);
+        } else if( userId != null) {
+            return ticketRepository.findByUserId(userId, pageable)
+                    .map(ticketMapper::toResponse);
+        } else if( status != null) {
+            return ticketRepository.findByStatus(status, pageable)
+                    .map(ticketMapper::toResponse);
+        }
         return ticketRepository.findAll(pageable)
                 .map(ticketMapper::toResponse);
     }
