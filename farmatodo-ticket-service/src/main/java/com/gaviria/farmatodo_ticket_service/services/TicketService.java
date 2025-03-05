@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.gaviria.farmatodo_ticket_service.dto.TicketRequest;
 import com.gaviria.farmatodo_ticket_service.models.Ticket;
 import com.gaviria.farmatodo_ticket_service.repositories.TicketRepository;
 
@@ -19,11 +20,15 @@ public class TicketService {
     
     private final TicketRepository ticketRepository;
 
-    public Ticket createTicket(Ticket ticket) {
-        return ticketRepository.save(ticket);
+    public Ticket createTicket(TicketRequest ticket) {
+        Ticket newTicket = new Ticket();
+        newTicket.setDescription(ticket.getDescription());
+        newTicket.setUserId(ticket.getUserId());
+        newTicket.setStatus(ticket.getStatus());
+        return ticketRepository.save(newTicket);
     }
 
-    public Ticket updateTicket(UUID id, Ticket ticket) {
+    public Ticket updateTicket(UUID id, TicketRequest ticket) {
         Ticket ticketToUpdate = ticketRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ticket no encontrado con ID: " + id));
         ticketToUpdate.setDescription(ticket.getDescription());
         ticketToUpdate.setStatus(ticket.getStatus());
