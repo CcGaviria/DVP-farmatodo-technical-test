@@ -4,8 +4,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +19,7 @@ import com.gaviria.farmatodo_user_service.models.User;
 import com.gaviria.farmatodo_user_service.repositories.UserRepository;
 import com.gaviria.farmatodo_user_service.security.JwtUtil;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +56,13 @@ public class AuthController {
         user.setLastName(registerRequest.getLastName());
         userRepository.save(user);
         return ResponseEntity.ok(new RegisterResponse("User registered successfully"));
+    }
+
+    @GetMapping("/validate-token")
+    @Operation(summary = "Validar token")
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
+        String cleanToken = token.replace("Bearer ", "");
+        Claims claims = jwtUtil.extractAllClaims(cleanToken);
+        return ResponseEntity.ok(claims.getSubject());
     }
 }

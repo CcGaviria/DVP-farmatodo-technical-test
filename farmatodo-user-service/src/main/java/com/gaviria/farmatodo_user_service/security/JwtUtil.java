@@ -55,7 +55,7 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
             .setSigningKey(getSigningKey())
             .parseClaimsJws(token)
