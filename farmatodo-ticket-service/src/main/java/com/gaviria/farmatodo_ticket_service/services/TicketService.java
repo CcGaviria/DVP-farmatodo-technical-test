@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gaviria.farmatodo_ticket_service.dto.TicketRequest;
+import com.gaviria.farmatodo_ticket_service.dto.TicketResponse;
+import com.gaviria.farmatodo_ticket_service.mappers.TicketMapper;
 import com.gaviria.farmatodo_ticket_service.models.Ticket;
 import com.gaviria.farmatodo_ticket_service.repositories.TicketRepository;
 
@@ -20,31 +22,35 @@ public class TicketService {
     
     private final TicketRepository ticketRepository;
 
-    public Ticket createTicket(TicketRequest ticket) {
-        Ticket newTicket = new Ticket();
-        newTicket.setDescription(ticket.getDescription());
-        newTicket.setUserId(ticket.getUserId());
-        newTicket.setStatus(ticket.getStatus());
-        return ticketRepository.save(newTicket);
+    private final TicketMapper ticketMapper;
+
+    public TicketResponse createTicket(TicketRequest ticket) {
+        Ticket newTicket = ticketMapper.toEntity(ticket);
+        ticketRepository.save(newTicket); 
+        return ticketMapper.toResponse(newTicket);
     }
 
-    public Ticket updateTicket(UUID id, TicketRequest ticket) {
+    public TicketResponse updateTicket(UUID id, TicketRequest ticket) {
         Ticket ticketToUpdate = ticketRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ticket no encontrado con ID: " + id));
         ticketToUpdate.setDescription(ticket.getDescription());
         ticketToUpdate.setStatus(ticket.getStatus());
-        return ticketRepository.save(ticketToUpdate);
+        ticketToUpdate.setUserId(ticket.getUserId());
+        ticketRepository.save(ticketToUpdate);
+        return ticketMapper.toResponse(ticketToUpdate);
     }
 
     public void deleteTicket(UUID id) {
         ticketRepository.deleteById(id);
     }
 
-    public Ticket getTicketById(UUID id) {
-        return ticketRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ticket no encontrado con ID: " + id));
+    public TicketResponse getTicketById(UUID id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ticket no encontrado con ID: " + id));
+        return ticketMapper.toResponse(ticket);
     }
 
-    public Page<Ticket> getTickets(Pageable pageable) {
-        return ticketRepository.findAll(pageable);
+    public Page<TicketResponse> getTickets(Pageable pageable) {
+        return ticketRepository.findAll(pageable)
+                .map(ticketMapper::toResponse);
     }
 
     

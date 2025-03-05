@@ -22,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaviria.farmatodo_user_service.models.User;
+import com.gaviria.farmatodo_user_service.dto.UserRequest;
+import com.gaviria.farmatodo_user_service.dto.UserResponse;
 
 import java.util.UUID;
 
@@ -49,14 +50,9 @@ public class UserControllerTest {
 
     @Test
     void testCreateUser() throws Exception {
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setFirstName("Cristian");
-        user.setLastName("Gaviria");
-        user.setEmail("Cristian@gaviria.org");
-        user.setPassword("Simon27+");
+        UserResponse user = new UserResponse(UUID.randomUUID(), "Cristian", "Gaviria", "Cristian@gaviria.org");
 
-        when(userService.createUser(any(User.class))).thenReturn(user);
+        when(userService.createUser(any(UserRequest.class))).thenReturn(user);
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
@@ -72,12 +68,9 @@ public class UserControllerTest {
     @Test
     void testUpdateUser() throws Exception {
         UUID userId = UUID.randomUUID();
-        User user = new User();
-        user.setId(userId);
-        user.setFirstName("Cristian Camilo");
-        user.setLastName("Gaviria Ovalle");
+        UserResponse user = new UserResponse(userId, "Cristian Camilo", "Gaviria Ovalle", "Cristian@gaviria.org");
 
-        when(userService.updateUser(any(UUID.class), any(User.class))).thenReturn(user);
+        when(userService.updateUser(any(UUID.class), any(UserRequest.class))).thenReturn(user);
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
@@ -86,7 +79,8 @@ public class UserControllerTest {
                 .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Cristian Camilo"))
-                .andExpect(jsonPath("$.lastName").value("Gaviria Ovalle"));
+                .andExpect(jsonPath("$.lastName").value("Gaviria Ovalle"))
+                .andExpect(jsonPath("$.email").value("Cristian@gaviria.org"));
     }
 
     @Test
@@ -102,9 +96,7 @@ public class UserControllerTest {
     @Test
     void testGetUserById() throws Exception {
         UUID userId = UUID.randomUUID();
-        User user = new User();
-        user.setId(userId);
-        user.setFirstName("Cristian");
+        UserResponse user = new UserResponse(userId, "Cristian", "Gaviria", "cristian@gaviria.org");
 
         when(userService.getUserById(any(UUID.class))).thenReturn(user);
 
