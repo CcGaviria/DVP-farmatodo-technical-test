@@ -41,6 +41,11 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String password;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
