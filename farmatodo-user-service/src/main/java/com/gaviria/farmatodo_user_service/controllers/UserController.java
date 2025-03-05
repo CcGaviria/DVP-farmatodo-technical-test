@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gaviria.farmatodo_user_service.dto.UserResponse;
 import com.gaviria.farmatodo_user_service.models.User;
 import com.gaviria.farmatodo_user_service.services.UserService;
 
@@ -46,7 +47,7 @@ public class UserController {
 
     @Operation(summary = "Obtener todos los usuarios")
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
+    public ResponseEntity<List<UserResponse>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
