@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gaviria.farmatodo_ticket_service.dto.TicketRequest;
-import com.gaviria.farmatodo_ticket_service.models.Ticket;
+import com.gaviria.farmatodo_ticket_service.dto.TicketResponse;
 import com.gaviria.farmatodo_ticket_service.services.TicketService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,13 +35,13 @@ public class TicketController {
 
     @PostMapping
     @Operation(summary = "Crear un ticket")
-    public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest ticket) {
+    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest ticket) {
         return ResponseEntity.ok(ticketService.createTicket(ticket));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un ticket")
-    public ResponseEntity<Ticket> updateTicket(@PathVariable UUID id, @RequestBody TicketRequest ticket) {
+    public ResponseEntity<TicketResponse> updateTicket(@PathVariable UUID id, @RequestBody TicketRequest ticket) {
         return ResponseEntity.ok(ticketService.updateTicket(id, ticket));
     }
 
@@ -54,13 +54,13 @@ public class TicketController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener un ticket por ID")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable UUID id) {
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable UUID id) {
         return ResponseEntity.ok(ticketService.getTicketById(id));
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los tickets")
-    public ResponseEntity<Page<Ticket>> getTickets(Pageable pageable) {
+    public ResponseEntity<Page<TicketResponse>> getTickets(Pageable pageable) {
         return ResponseEntity.ok(ticketService.getTickets(pageable));
     }
 
