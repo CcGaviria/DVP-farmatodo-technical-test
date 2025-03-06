@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: simon
+      POSTGRES_PASSWORD: simon
+      POSTGRES_DB: db_farmatodo_dev
+    ports:
+      - "5437:5432"
+    networks:
+      - farmatodo-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  user-service:
+    build:
+      context: ./farmatodo-user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    restart: always
+    depends_on:
+      - postgres-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/db_farmatodo_dev
+      SPRING_DATASOURCE_USERNAME: simon
+      SPRING_DATASOURCE_PASSWORD: simon
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8070
+    ports:
+      - "8070:8070"
+    networks:
+      - farmatodo-network
+
+  ticket-service:
+    build:
+      context: ./farmatodo-ticket-service
+      dockerfile: Dockerfile
+    container_name: ticket-service
+    restart: always
+    depends_on:
+      - postgres-db
+      - user-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/db_farmatodo_dev
+      SPRING_DATASOURCE_USERNAME: simon
+      SPRING_DATASOURCE_PASSWORD: simon
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      USER_SERVICE_URL: http://user-service:8070
+      SERVER_PORT: 8071
+    ports:
+      - "8071:8071"
+    networks:
+      - farmatodo-network
+
+networks:
+  farmatodo-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
